@@ -1,10 +1,7 @@
-using FinalTask;
 using FinalTask.PageObject;
 using FinalTaskTests.Fixtures;
+using FluentAssertions;
 using log4net;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Edge;
-using OpenQA.Selenium.Firefox;
 
 namespace FinalTaskTests
 {
@@ -33,12 +30,12 @@ namespace FinalTaskTests
             this.logger.Info("Entering credentials");
             logInPage.EnterUsername(userName);
             logInPage.EnterPassword(password);
-            this.logger.Info("Clearing credentials");
+            this.logger.Info("Clearing username");
             logInPage.ClearLogInInput();
             this.logger.Info("Attempting Log In");
             logInPage.ClickLogin();
 
-            Assert.Equal("Epic sadface: Username is required", logInPage.GetError());
+            _ = logInPage.GetErrorMessage().Should().Be("Epic sadface: Username is required");
         }
 
         [Theory]
@@ -53,11 +50,15 @@ namespace FinalTaskTests
             LogInPage logInPage = new LogInPage(this.fixture.Driver);
             logInPage.Cleanup();
             logInPage.Open();
+            this.logger.Info("Entering credentials");
             logInPage.EnterUsername(userName);
             logInPage.EnterPassword(password);
+            this.logger.Info("Clearing password");
             logInPage.ClearPasswordInput();
+            this.logger.Info("Attempting Log In");
             logInPage.ClickLogin();
-            Assert.Equal("Epic sadface: Password is required", logInPage.GetError());
+
+            _ = logInPage.GetErrorMessage().Should().Be("Epic sadface: Password is required");
         }
 
         [Theory]
@@ -71,27 +72,24 @@ namespace FinalTaskTests
             LogInPage logInPage = new LogInPage(this.fixture.Driver);
             logInPage.Cleanup();
             logInPage.Open();
+            this.logger.Info("Entering credentials");
             logInPage.EnterUsername(userName);
             logInPage.EnterPassword(password);
+            this.logger.Info("Attempting Log In");
             logInPage.ClickLogin();
-            Assert.Equal("Swag Labs", logInPage.ApproveLogIn());
+
+            _ = logInPage.ApproveLogIn().Should().Be("Swag Labs");
         }
     }
 
     [Collection("FirefoxTests")]
-    public class LoginTextFirefox : LogInTests, IClassFixture<FirefoxDriverFixture>
+    public class LoginTextFirefox(FirefoxDriverFixture fixture) : LogInTests(fixture), IClassFixture<FirefoxDriverFixture>
     {
-        public LoginTextFirefox(FirefoxDriverFixture fixture) : base(fixture)
-        {
-        }
     }
 
 
     [Collection("EdgeTests")]
-    public class LoginTextEdge : LogInTests, IClassFixture<EdgeDriverFixture>
+    public class LoginTextEdge(EdgeDriverFixture fixture) : LogInTests(fixture), IClassFixture<EdgeDriverFixture>
     {
-        public LoginTextEdge(EdgeDriverFixture fixture) : base(fixture)
-        {
-        }
     }
 }

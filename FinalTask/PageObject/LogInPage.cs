@@ -4,9 +4,9 @@ namespace FinalTask.PageObject;
 public class LogInPage : BasePage
 {
     private static string Url { get; } = "https://www.saucedemo.com/";
-    private readonly By usernameField = By.Id("user-name");
-    private readonly By passwordField = By.Id("password");
-    private readonly By loginButton = By.Id("login-button");
+    private readonly By usernameField = By.CssSelector("#user-name");
+    private readonly By passwordField = By.CssSelector("#password");
+    private readonly By loginButton = By.CssSelector("#login-button");
     private readonly By errorMessage = By.CssSelector("[data-test='error']");
 
     public LogInPage(IWebDriver driver) : base(driver)
@@ -43,7 +43,7 @@ public class LogInPage : BasePage
         this.DeleteText(this.passwordField);
     }
 
-    public string GetError()
+    public string GetErrorMessage()
     {
         return this.driver.FindElement(this.errorMessage).Text;
     }

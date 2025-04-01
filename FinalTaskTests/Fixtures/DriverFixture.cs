@@ -1,14 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OpenQA.Selenium;
 
 namespace FinalTaskTests.Fixtures;
 public abstract class DriverFixture<TDriver> : IDriverFixture, IDisposable
         where TDriver : IWebDriver, new()
 {
+    private bool isDisposed = false;
+
+    ~DriverFixture()
+    {
+        this.Dispose(false);
+    }
+
     protected DriverFixture()
     {
         this.Driver = new TDriver();
@@ -20,10 +22,22 @@ public abstract class DriverFixture<TDriver> : IDriverFixture, IDisposable
 
     public void Dispose()
     {
-        if (this.Driver != null)
+        this.Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!this.isDisposed)
         {
-            this.Driver.Quit();
-            this.Driver.Dispose();
+            if (disposing)
+            {
+                this.Driver.Quit();
+                this.Driver.Dispose();
+            }
+
+            this.isDisposed = true;
         }
     }
 }

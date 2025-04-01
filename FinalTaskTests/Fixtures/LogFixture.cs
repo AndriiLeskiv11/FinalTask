@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using log4net.Config;
 using log4net;
 
@@ -12,6 +7,6 @@ public class LogFixture
     public LogFixture()
     {
         var logRepository = LogManager.GetRepository();
-        XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+        _ = XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
     }
 }
